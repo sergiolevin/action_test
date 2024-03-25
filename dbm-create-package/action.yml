@@ -42,6 +42,6 @@ runs:
             $PACKAGE_PATH = "${{ inputs.files_path }}\${{ inputs.package_name }}"
             $ZIP_PATH = "${{ inputs.files_path }}\${{ inputs.package_name }}.zip"
             echo "${{ inputs.files_path }}"
-            java -jar "${{ inputs.jar_path }}" -CreateManifestFile -PathToScriptsFolder "$PACKAGE_PATH"
-            Compress-Archive -Path "$PACKAGE_PATH" -DestinationPath "$ZIP_PATH" -Force
-            java -jar "${{ inputs.jar_path }}" -Package -ProjectName ${{ inputs.project_id }} -IgnoreScriptWarnings True -FilePath "$ZIP_PATH" -Server ${{ inputs.server }} -UseSSL False -AuthType DBmaestroAccount -UserName ${{ inputs.user_name }} -Password ${{ inputs.password }}
+            java -jar "${{ inputs.jar_path }}" -CreateManifestFile -PathToScriptsFolder $PACKAGE_PATH
+            Compress-Archive -Path "$PACKAGE_PATH" -DestinationPath $ZIP_PATH -Force
+            java -jar "${{ inputs.jar_path }}" -Package -ProjectName ${{ inputs.project_id }} -IgnoreScriptWarnings True -FilePath $ZIP_PATH -Server ${{ inputs.server }} -UseSSL False -AuthType DBmaestroAccount -UserName ${{ inputs.user_name }} -Password ${{ inputs.password }}

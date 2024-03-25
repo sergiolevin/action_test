@@ -1,0 +1,27 @@
+
+name: 'DBMaestro Jar Checkout Action'
+description: 'Chechouts DBmaestroAgent.jar with a specific version'
+inputs:
+  version:  
+    description: 'version to checkout'
+    required: true
+  target_path:
+    description: 'Path where dbm-agent-jar folder will be created'
+    required: True
+    default: '.'
+
+ 
+runs:
+  using: "composite"
+  steps:
+    - name: Checkout dbm jar
+      shell: PowerShell
+      run: |
+            cd ${{ inputs.target_path }}
+            if (!(Test-Path -Path "${{ inputs.target_path }}dbm-agent-jar\\")) {
+              git clone https://github.com/sergioldbm/dbm-agent-jar.git
+            } else {
+              cd ".\\dbm-agent-jar"
+              git fetch
+              git checkout tags/${{ inputs.version }}
+            }

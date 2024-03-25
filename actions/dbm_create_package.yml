@@ -1,0 +1,47 @@
+name: 'DBMaestro Actions'
+description: 'Execute DBMaestro automation commands '
+inputs:
+  command:  
+    description: 'DBM Command to perform'
+    required: true
+    default: 'CreateManifestFileAndPackage'
+  package_name:
+    description: 'Package Name'
+    required: True
+  files_path:
+    description: 'Local path where package files are located'
+    default: '.'
+  project_id:
+    description: 'DBM Project Name'
+    default: ''
+  env_name:
+    description: 'Environment Name'
+    default: 'Release Source'
+  server:
+    description: 'Server location'
+    default: ''
+  user_name:
+    description: 'User Name'
+    default: ''
+  password:
+    description: 'Password'
+    default: ''
+  jar_path:
+    description: 'Jar Path'
+    default: '.\\DBmaestroAgent.jar'
+ 
+runs:
+  using: "composite"
+  steps:
+    - name: Create Manifest and Package
+      # Creates DBM Manifest file, the zip file and then Uploads/Creates DBM Package
+      if: ${{ inputs.command == 'CreateManifestFileAndPackage'}}
+      shell: PowerShell
+      run: |
+            echo "Creating Package:  ${{ inputs.package_name }}"
+            $PACKAGE_PATH = "${{ inputs.files_path }}\${{ inputs.package_name }}"
+            $ZIP_PATH = "${{ inputs.files_path }}\${{ inputs.package_name }}.zip"
+            echo "${{ inputs.files_path }}"
+            java -jar "${{ inputs.jar_path }}" -CreateManifestFile -PathToScriptsFolder "$PACKAGE_PATH"
+            Compress-Archive -Path "$PACKAGE_PATH" -DestinationPath "$ZIP_PATH" -Force
+            java -jar "${{ inputs.jar_path }}" -Package -ProjectName ${{ inputs.project_id }} -IgnoreScriptWarnings True -FilePath "$ZIP_PATH" -Server ${{ inputs.server }} -UseSSL False -AuthType DBmaestroAccount -UserName ${{ inputs.user_name }} -Password ${{ inputs.password }}
